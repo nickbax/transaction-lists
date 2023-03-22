@@ -1,0 +1,93 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Ethereum Transaction List",
+  "description": "A list of Ethereum transaction metadata for dApp interfaces such as Privacy Pools",
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "object",
+      "description": "The version of the list, used in change detection.",
+      "properties": {
+        "major": {
+          "type": "integer",
+          "description": "The major version of the list. Must be incremented when transactions are removed from the list without expiring.",
+          "minimum": 0
+        },
+        "minor": {
+          "type": "integer",
+          "description": "The minor version of the list. Must be incremented when transactions are added to the list.",
+          "minimum": 0
+        },
+        "patch": {
+          "type": "integer",
+          "description": "The patch version of the list. Must be incremented when minor details of transactions on the list are changed (label, notes).",
+          "minimum": 0
+        }
+      },
+      "required": ["major", "minor", "patch"]
+    },
+    "transactions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "payload": {
+            "type": "object",
+            "properties": {
+              "tx_hash": {
+                "type": "string",
+                "description": "The transaction hash",
+                "pattern": "^0x[a-fA-F0-9]{64}$"
+              },
+              "sender": {
+                "type": "string",
+                "description": "The sender Ethereum address",
+                "pattern": "^0x[a-fA-F0-9]{40}$"
+              },
+              "label": {
+                "type": "string",
+                "description": "The label for the transaction"
+              },
+              "expiration": {
+                "type": ["integer", "null"],
+                "description": "The expiration date of the label in epoch time (seconds), or null if it never expires",
+                "minimum": 0
+              },
+              "number": {
+                "type": ["integer", "null"],
+                "description": "An optional human-readable identifier for the transaction"
+              },
+              "timestamp": {
+                "type": ["integer", "null"],
+                "description": "The timestamp when the transaction was added to the list, in epoch time (seconds)"
+              }
+            },
+            "required": ["tx_hash", "sender", "label", "expiration"]
+          },
+          "notes": {
+            "type": "string",
+            "description": "Notes associated with the transaction, can be a string or an IPFS hash",
+            "maxLength": 500
+          },
+          "signature": {
+            "type": "object",
+            "properties": {
+              "Signature": {
+                "type": "string",
+                "description": "The cryptographic signature of the payload dictionary"
+              },
+              "Address": {
+                "type": "string",
+                "description": "The Ethereum address that signed the payload",
+                "pattern": "^0x[a-fA-F0-9]{40}$"
+              }
+            },
+            "required": ["Signature", "Address"]
+          }
+        },
+        "required": ["payload", "signature"]
+      }
+    }
+  },
+  "required": ["version", "transactions"]
+}
