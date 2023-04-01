@@ -1,0 +1,582 @@
+﻿{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Privacy Pool - Blockchain Analysis Company API",
+    "description": "This is a sample endpoint for a blockchain analysis company that is monitoring all deposits to a privacy pool. ListDAOs use these endpoints to assist in the generation and curation of inclusion proofs. VASPs may use these endpoints to verify that ListDAOs meet the standards set by the blockchain analysis company and identify discrepancies.",
+    "version": "t"
+  },
+  "paths": {
+    "/transaction": {
+      "get": {
+        "tags": [
+          "Blockchain Analysis Company"
+        ],
+        "summary": "Retrieve a single signed transaction",
+        "description": "Given the transaction hash of a deposit to the privacy pool and an optional chain ID, returns a single signed transaction provided by the blockchain analysis provider.",
+        "parameters": [
+          {
+            "name": "tx_hash",
+            "in": "query",
+            "description": "The transaction hash to query",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "pattern": "^0x[a-fA-F0-9]{64}$",
+              "type": "string"
+            },
+            "example": "0x0009e4a181f1c93e5cd48819af5dfdc9300eeae9f11c226cccd4ae539b1feacc"
+          },
+          {
+            "name": "chain_id",
+            "in": "query",
+            "description": "The optional chain ID to specify the target blockchain",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "integer"
+            },
+            "example": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A single signed transaction",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SignedTransaction"
+                },
+                "example": {
+                  "payload": {
+                    "tx_hash": "0x0009e4a181f1c93e5cd48819af5dfdc9300eeae9f11c226cccd4ae539b1feacc",
+                    "sender": "0x6f62cfcd3e05f084416e2fa3a434b7ba31c18c47",
+                    "label": "Sanctions"
+                  },
+                  "notes": "deposited to tornado on or after 8/8/2022",
+                  "signature": {
+                    "Signature": "0x6cb011131246af4baf84f5f4c0bd898755cca5b12f80cd2ca8cfe82afc14be545d712c5a8e03b76f94feecb6f6b4faa2dc94fc43761cd0939eaa1c5d9566fb021c",
+                    "Address": "0x90F8bf6A479f320ead074411a4B0e7944Ea8c9C1"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transactions_by_block": {
+      "get": {
+        "tags": [
+          "Blockchain Analysis Company"
+        ],
+        "summary": "Retrieve multiple signed transactions by block",
+        "description": "Retrieves transactions to the privacy pool based on the  start_block, end_block, contract_address, chain_id, verbose and only_flagged. This endpoint would be used frequently by list curators to find all flagged transactions since the last time they upgraded the list. By default will only return flagged transactions.",
+        "parameters": [
+          {
+            "name": "start_block",
+            "in": "query",
+            "description": "The start block number",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "integer"
+            },
+            "example": 15800000
+          },
+          {
+            "name": "end_block",
+            "in": "query",
+            "description": "The end block number",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "integer"
+            },
+            "example": 16000000
+          },
+          {
+            "name": "contract_address",
+            "in": "query",
+            "description": "The contract address of the privacy pool",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "pattern": "^0x[a-fA-F0-9]{40}$",
+              "type": "string"
+            },
+            "example": "0x47CE0C6eD5B0Ce3d3A51fdb1C52DC66a7c3c2936"
+          },
+          {
+            "name": "chain_id",
+            "in": "query",
+            "description": "The optional chain ID to specify the target blockchain",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "integer"
+            },
+            "example": 1
+          },
+          {
+            "name": "only_flagged",
+            "in": "query",
+            "description": "If set to False, returns all transactions to the privacy pool instead of only the flagged transactions",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "boolean"
+            },
+            "example": true
+          },
+          {
+            "name": "verbose",
+            "in": "query",
+            "description": "If set to False, only returns a list of flagged transactions to the pool.",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "type": "boolean"
+            },
+            "example": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of signed transactions",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_200"
+                },
+                "example": {
+                  "transactions": [
+                    {
+                      "payload": {
+                        "tx_hash": "0x0009e4a181f1c93e5cd48819af5dfdc9300eeae9f11c226cccd4ae539b1feacc",
+                        "sender": "0x6f62cfcd3e05f084416e2fa3a434b7ba31c18c47",
+                        "label": "Sanctions"
+                      },
+                      "notes": "deposited to tornado on or after 8/8/2022",
+                      "signature": {
+                        "Signature": "0x6cb011131246af4baf84f5f4c0bd898755cca5b12f80cd2ca8cfe82afc14be545d712c5a8e03b76f94feecb6f6b4faa2dc94fc43761cd0939eaa1c5d9566fb021c",
+                        "Address": "0x90F8bf6A479f320ead074411a4B0e7944Ea8c9C1"
+                      }
+                    },
+                    {
+                      "payload": {
+                        "tx_hash": "0x001d79c2e6c90bea0a8c1c45bfe6621c368ffa96d80208e21bb4020e82dd4636",
+                        "sender": "0xbe7518a34df454157d68a36096da1554afde1806",
+                        "label": "Sanctions"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/inclusion_root": {
+      "get": {
+        "tags": [
+          "Blockchain Analysis Company and ListDAO"
+        ],
+        "summary": "Retrieve the inclusion Merkle root",
+        "description": "Retrieves the Merkle root of the inclusion tree for the specified contract address. This is the list of all transactions to the contract address which are *not* flagged by the blockchain analysis company. The inclusion root can be used to generate a withdrawal proof that complies with the blockchain analysis company's standards or can be used to quickly verify that a ListDAO is accurately implementing the analysis company's labels.",
+        "parameters": [
+          {
+            "name": "contract_address",
+            "in": "query",
+            "description": "The contract address of the privacy pool",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "pattern": "^0x[a-fA-F0-9]{40}$",
+              "type": "string"
+            },
+            "example": "0x47CE0C6eD5B0Ce3d3A51fdb1C52DC66a7c3c2936"
+          },
+          {
+            "name": "block_number",
+            "in": "query",
+            "description": "Optional. Provides the historical Merkle root which would have been provided by the blockchain analysis company if it had been queried at a specific block in the past.",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "example": 15830000
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The inclusion Merkle root",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_200_1"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/exclusion_root": {
+      "get": {
+        "tags": [
+          "Blockchain Analysis Company and ListDAO"
+        ],
+        "summary": "Retrieve the exclusion Merkle root",
+        "description": "Retrieves the Merkle root of the exclusion tree for the specified contract address. This exclusion proof contains all *flagged* deposits to the contract address. The exclusion root can be used to generate a proof-of-innocence that complies with the blockchain analysis company's standards or can be used to quickly verify that a ListDAO is accurately implementing the analysis company's labels.",
+        "parameters": [
+          {
+            "name": "contract_address",
+            "in": "query",
+            "description": "The contract address of the privacy pool",
+            "required": true,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "pattern": "^0x[a-fA-F0-9]{40}$",
+              "type": "string"
+            },
+            "example": "0x47CE0C6eD5B0Ce3d3A51fdb1C52DC66a7c3c2936"
+          },
+          {
+            "name": "block_number",
+            "in": "query",
+            "description": "Optional. Provides the historical Merkle root which would have been provided by the blockchain analysis company if it had been queried at a specific block in the past. This can be used to quickly determine whether a withdrawal was flagged at the time it was made, or flagged retroactively.",
+            "required": false,
+            "style": "form",
+            "explode": true,
+            "schema": {
+              "minimum": 0,
+              "type": "integer"
+            },
+            "example": 15830000
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The exclusion Merkle root",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/inline_response_200_2"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transaction_labels/{transaction_hash}": {
+      "get": {
+        "tags": [
+          "ListDAO"
+        ],
+        "summary": "Retrieve aggregated transaction labels associated with a specific transaction hash.",
+        "description": "This endpoint returns transaction labels related to the given transaction hash, provided by different entities that were monitoring deposits to the privacy pool, as aggregated by the ListDAO.",
+        "parameters": [
+          {
+            "name": "transaction_hash",
+            "in": "path",
+            "description": "The transaction hash for which the labels are required.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "0xfae939e454bb6ab528d7cbb1df388f17099f96c6286a734b034210c2d3de7995"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of transaction labels for the specified transaction hash.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TransactionLabel"
+                  }
+                },
+                "example": [
+                  {
+                    "payload": {
+                      "tx_hash": "0xfad7fd2a445c1a11e9d26b151f67986b4796737e146148fd5c38e47c1a59a5c4",
+                      "sender": "0x12d66f87a04a9e220743712ce6d9bb1b5616b8fc",
+                      "label": "Sanctions",
+                      "expiration": "NaN"
+                    },
+                    "notes": "https://roninblockchain.substack.com/p/community-alert-ronin-validators",
+                    "signature": {
+                      "Signature": "0x81e93ac9a7eea336d34dbdc264306ff51edb1c3956a2f85d7b9f470f7120a14e57f79a2693352b5dd5c66a854aae226f854a8fdf8a5f3dd9eed62bb1e2e17ca51c",
+                      "Address": "companya.eth"
+                    }
+                  },
+                  {
+                    "payload": {
+                      "tx_hash": "0xfae939e454bb6ab528d7cbb1df388f17099f96c6286a734b034210c2d3de7995",
+                      "sender": "0x12d66f87a04a9e220743712ce6d9bb1b5616b8fc",
+                      "label": "Sanctions",
+                      "expiration": "NaN"
+                    },
+                    "notes": "https://gist.github.com/banteg/1657d4778eb86c460e03bc58b99970c0",
+                    "signature": {
+                      "Signature": "0x973c292d431b8bf38a4b061c3d2144884853d8afdb3b3cebe450f8a5948004624a2efca26954f2b4840b224590ee94ec348e13d704f4aa0520a57240d1dce1441c",
+                      "Address": "banteg.eth"
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/get_transaction_list/{merkle_root}": {
+      "get": {
+        "tags": [
+          "ListDAO"
+        ],
+        "summary": "Retrieve a list of transactions associated with the provided Merkle root.",
+        "description": "Retrieve a list of transactions associated with the provided Merkle root. Can provide a list used for building either an inclusion or exclusion proof. This endpoint is useful for entities auditing the performance of a ListDAO.",
+        "parameters": [
+          {
+            "name": "merkle_root",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "0xexamplemerkleroot1234567890123456789012345678901234567890123456789012345"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "example": "inclusion"
+                    },
+                    "transactions": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "payload": {
+                            "type": "object",
+                            "properties": {
+                              "tx_hash": {
+                                "type": "string"
+                              },
+                              "sender": {
+                                "type": "string"
+                              },
+                              "label": {
+                                "type": "string"
+                              },
+                              "expiration": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "notes": {
+                            "type": "string"
+                          },
+                          "signature": {
+                            "type": "object",
+                            "properties": {
+                              "Signature": {
+                                "type": "string"
+                              },
+                              "Address": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "type": "inclusion",
+                  "transactions": [
+                    {
+                      "payload": {
+                        "tx_hash": "0xfad7fd2a445c1a11e9d26b151f67986b4796737e146148fd5c38e47c1a59a5c4",
+                        "sender": "0x12d66f87a04a9e220743712ce6d9bb1b5616b8fc",
+                        "label": "Sanctions",
+                        "expiration": "NaN"
+                      },
+                      "notes": "https://roninblockchain.substack.com/p/community-alert-ronin-validators",
+                      "signature": {
+                        "Signature": "0x81e93ac9a7eea336d34dbdc264306ff51edb1c3956a2f85d7b9f470f7120a14e57f79a2693352b5dd5c66a854aae226f854a8fdf8a5f3dd9eed62bb1e2e17ca51c",
+                        "Address": "companya.eth"
+                      }
+                    },
+                    {
+                      "payload": {
+                        "tx_hash": "0xfae939e454bb6ab528d7cbb1df388f17099f96c6286a734b034210c2d3de7995",
+                        "sender": "0x12d66f87a04a9e220743712ce6d9bb1b5616b8fc",
+                        "label": "Sanctions",
+                        "expiration": "NaN"
+                      },
+                      "notes": "https://gist.github.com/banteg/1657d4778eb86c460e03bc58b99970c0",
+                      "signature": {
+                        "Signature": "0x973c292d431b8bf38a4b061c3d2144884853d8afdb3b3cebe450f8a5948004624a2efca26954f2b4840b224590ee94ec348e13d704f4aa0520a57240d1dce1441c",
+                        "Address": "banteg.eth"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "SignedTransaction": {
+        "required": [
+          "notes",
+          "payload",
+          "signature"
+        ],
+        "type": "object",
+        "properties": {
+          "payload": {
+            "$ref": "#/components/schemas/SignedTransaction_payload"
+          },
+          "notes": {
+            "type": "string"
+          },
+          "signature": {
+            "$ref": "#/components/schemas/SignedTransaction_signature"
+          }
+        }
+      },
+      "inline_response_200": {
+        "type": "object",
+        "properties": {
+          "transactions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SignedTransaction"
+            }
+          }
+        }
+      },
+      "inline_response_200_1": {
+        "type": "object",
+        "properties": {
+          "inclusion_root": {
+            "pattern": "^0x[a-fA-F0-9]{64}$",
+            "type": "string",
+            "example": "0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+          }
+        }
+      },
+      "inline_response_200_2": {
+        "type": "object",
+        "properties": {
+          "exclusion_root": {
+            "pattern": "^0x[a-fA-F0-9]{64}$",
+            "type": "string",
+            "example": "0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+          }
+        }
+      },
+      "SignedTransaction_payload": {
+        "type": "object",
+        "properties": {
+          "tx_hash": {
+            "pattern": "^0x[a-fA-F0-9]{64}$",
+            "type": "string"
+          },
+          "sender": {
+            "pattern": "^0x[a-fA-F0-9]{40}$",
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "expiration": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "SignedTransaction_signature": {
+        "type": "object",
+        "properties": {
+          "Signature": {
+            "pattern": "^0x[a-fA-F0-9]{130}$",
+            "type": "string"
+          },
+          "Address": {
+            "pattern": "^0x[a-fA-F0-9]{40}$",
+            "type": "string"
+          }
+        }
+      },
+      "TransactionLabel": {
+        "type": "object",
+        "properties": {
+          "payload": {
+            "type": "object",
+            "properties": {
+              "tx_hash": {
+                "type": "string"
+              },
+              "sender": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "expiration": {
+                "type": "string"
+              }
+            }
+          },
+          "notes": {
+            "type": "string"
+          },
+          "signature": {
+            "type": "object",
+            "properties": {
+              "Signature": {
+                "type": "string"
+              },
+              "Address": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
